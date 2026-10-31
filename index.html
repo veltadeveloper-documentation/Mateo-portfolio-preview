@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Mateo Rincón — Desarrollador Creativo · Medellín</title>
+<meta name="description" content="Portafolio de Mateo Rincón, desarrollador creativo y diseñador de interfaces en Medellín, Colombia.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23D9F454'/><text x='32' y='44' font-family='Arial,sans-serif' font-weight='900' font-size='34' fill='%23161903' text-anchor='middle'>M</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============ Tokens ============ */
+:root{
+  --bg:#0D0D11; --bg2:#14141B; --bg3:#1B1B24;
+  --ink:#F4F1E9; --mut:rgba(244,241,233,.55); --line:rgba(244,241,233,.14);
+  --lime:#D9F454; --lime-ink:#161903; --orange:#FF7A45;
+  --fd:'Syne',sans-serif; --fb:'Space Grotesk',Helvetica,sans-serif; --fm:'IBM Plex Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --pad:clamp(1.25rem,4vw,4.5rem);
+  --header-h:68px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 1rem);color-scheme:dark}
+body{
+  background:var(--bg);color:var(--ink);
+  font:400 1rem/1.65 var(--fb);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+body.no-scroll{overflow:hidden}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+ul,ol{list-style:none}
+::selection{background:var(--lime);color:var(--lime-ink)}
+:focus-visible{outline:2px solid var(--lime);outline-offset:3px;border-radius:4px}
+.mono{font-family:var(--fm);font-size:.72rem;letter-spacing:.09em;text-transform:uppercase}
+.lucide{width:1.1em;height:1.1em;stroke-width:2;flex:none}
+section,footer.contacto{scroll-margin-top:var(--header-h)}
+
+/* faint dot-grid texture */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(rgba(244,241,233,.055) 1px,transparent 1px);
+  background-size:26px 26px;
+}
+body>*{position:relative;z-index:1}
+
+/* ============ Scroll progress + cursor ============ */
+.progreso{position:fixed;top:0;left:0;right:0;height:2px;z-index:200;background:transparent}
+.progreso span{display:block;height:100%;background:var(--lime);transform:scaleX(0);transform-origin:left}
+.cursor{
+  position:fixed;top:0;left:0;width:10px;height:10px;border-radius:50%;
+  background:var(--lime);z-index:300;pointer-events:none;mix-blend-mode:difference;
+  transform:translate(-100px,-100px);transition:width .25s,height .25s,opacity .25s;
+}
+.cursor.grande{width:44px;height:44px;opacity:.65}
+
+/* skip link */
+.saltar{
+  position:fixed;top:.6rem;left:.6rem;z-index:400;background:var(--lime);color:var(--lime-ink);
+  padding:.6rem 1rem;border-radius:999px;font-weight:600;transform:translateY(-300%);
+  transition:transform .3s;
+}
+.saltar:focus-visible{transform:none}
+
+/* ============ Header ============ */
+.topo{
+  position:fixed;top:0;left:0;right:0;z-index:100;height:var(--header-h);
+  display:flex;align-items:center;transition:background .35s,border-color .35s,backdrop-filter .35s;
+  border-bottom:1px solid transparent;
+}
+.topo.scrolled{background:rgba(13,13,17,.82);backdrop-filter:blur(12px);border-color:var(--line)}
+.topo-inner{
+  width:100%;max-width:1400px;margin:0 auto;padding:0 var(--pad);
+  display:flex;align-items:center;gap:2rem;
+}
+.logo{font-family:var(--fd);font-weight:800;font-size:1.02rem;letter-spacing:-.01em;display:inline-flex;align-items:baseline;gap:.15rem}
+.logo b{color:var(--lime);font-weight:800}
+.nav-topo{display:flex;gap:1.6rem;margin-left:auto}
+.nav-topo a{font-size:.86rem;font-weight:500;color:var(--mut);transition:color .3s;padding:.3rem 0}
+.nav-topo a:hover,.nav-topo a.activo{color:var(--ink)}
+.topo-der{display:flex;align-items:center;gap:1rem;margin-left:auto}
+.nav-topo+.topo-der{margin-left:0}
+.reloj{color:var(--mut);font-variant-numeric:tabular-nums}
+
+/* ============ Botones ============ */
+.btn{
+  display:inline-flex;align-items:center;gap:.55rem;
+  padding:.85rem 1.5rem;border-radius:999px;
+  background:var(--lime);color:var(--lime-ink);
+  font:600 .82rem/1 var(--fb);letter-spacing:.02em;
+  transition:transform .3s var(--ease),background .3s,color .3s;
+  will-change:transform;
+}
+.btn:hover{background:var(--ink)}
+.btn-fantasma{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn-fantasma:hover{background:var(--bg3);border-color:var(--ink)}
+.btn-icono{
+  width:52px;height:52px;border-radius:50%;border:1px solid var(--line);
+  display:inline-flex;align-items:center;justify-content:center;flex:none;
+  transition:background .3s,color .3s,transform .3s var(--ease),border-color .3s;
+}
+.btn-icono:hover{background:var(--lime);color:var(--lime-ink);border-color:var(--lime);transform:rotate(-8deg)}
+
+/* ============ Hero ============ */
+.hero{
+  min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;
+  max-width:1400px;margin:0 auto;padding:calc(var(--header-h) + 3.5rem) var(--pad) 3rem;
+  position:relative;
+}
+.estado{
+  display:inline-flex;align-items:center;gap:.7rem;align-self:flex-start;
+  border:1px solid var(--line);border-radius:999px;padding:.45rem 1.1rem .45rem .45rem;
+  background:rgba(20,20,27,.7);backdrop-filter:blur(6px);
+}
+.estado img{width:28px;height:28px;border-radius:50%;object-fit:cover}
+.estado .punto{width:8px;height:8px;border-radius:50%;background:var(--lime);position:relative;flex:none}
+.estado .punto::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--lime);animation:pulso 2s ease-out infinite}
+@keyframes pulso{from{transform:scale(1);opacity:.8}to{transform:scale(3.2);opacity:0}}
+.hero h1{
+  font-family:var(--fd);font-weight:800;text-transform:uppercase;
+  font-size:clamp(2.7rem,11.5vw,8.6rem);line-height:.95;letter-spacing:-.03em;
+  margin:1.6rem 0 1.2rem;text-wrap:balance;
+}
+.hero h1 .out{color:var(--ink)}
+@supports ((-webkit-text-stroke:1px #000)){
+  .hero h1 .out{color:transparent;-webkit-text-stroke:2px var(--ink)}
+}
+.hero h1 .estrella{color:var(--orange);-webkit-text-stroke:0;font-size:.5em;vertical-align:.55em;margin-left:.1em}
+.hero-lado{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;flex-wrap:wrap;
+}
+.hero p.intro{max-width:44ch;color:var(--mut);font-size:clamp(1rem,1.35vw,1.15rem)}
+.hero p.intro strong{color:var(--ink);font-weight:600}
+.hero-ctas{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap}
+.hero-datos{
+  display:flex;flex-wrap:wrap;gap:0;margin-top:3rem;border-top:1px solid var(--line);
+}
+.hero-datos li{flex:1 1 160px;padding:1.2rem 1.4rem 0 0;display:flex;flex-direction:column;gap:.15rem}
+.hero-datos li+li{border-left:1px solid var(--line);padding-left:1.4rem}
+.hero-datos strong{font-family:var(--fd);font-weight:700;font-size:1.5rem;letter-spacing:-.01em}
+.hero-datos span{color:var(--mut)}
+
+/* Sello giratorio (desktop) */
+.sello{
+  position:absolute;right:var(--pad);top:22%;width:128px;height:128px;
+  display:none;align-items:center;justify-content:center;border-radius:50%;
+}
+.sello svg{position:absolute;inset:0;width:100%;height:100%;animation:girar 16s linear infinite}
+.sello svg text{font-family:var(--fm);font-size:11px;letter-spacing:.16em;fill:var(--mut);text-transform:uppercase}
+.sello .lucide{color:var(--lime);width:1.5em;height:1.5em;stroke-width:1.75;transition:transform .4s var(--ease)}
+.sello:hover .lucide{transform:translateY(5px)}
+@keyframes girar{to{transform:rotate(360deg)}}
+
+/* ============ Ticker ============ */
+.ticker{border-block:1px solid var(--line);overflow:hidden;padding:1rem 0;background:var(--bg2)}
+.ticker-pista{display:flex;width:max-content;animation:desplazar 24s linear infinite}
+.ticker:hover .ticker-pista{animation-play-state:paused}
+.ticker-bloque{display:flex;align-items:center;gap:2.2rem;padding-right:2.2rem}
+.ticker-bloque span{font-family:var(--fd);font-weight:700;text-transform:uppercase;font-size:clamp(.95rem,1.6vw,1.25rem);white-space:nowrap;letter-spacing:.02em}
+.ticker .est{color:var(--orange);font-size:.9em}
+@keyframes desplazar{to{transform:translateX(-50%)}}
+
+/* ============ Secciones ============ */
+.seccion{max-width:1400px;margin:0 auto;padding:clamp(4.5rem,9vw,8rem) var(--pad)}
+.sec-cab{display:flex;align-items:baseline;gap:1.2rem;flex-wrap:wrap;margin-bottom:clamp(2.2rem,5vw,3.8rem)}
+.sec-cab .num{color:var(--lime)}
+.sec-cab h2{font-family:var(--fd);font-weight:700;text-transform:uppercase;letter-spacing:-.02em;font-size:clamp(1.8rem,4.2vw,3.1rem);line-height:1.05}
+.sec-cab .nota{margin-left:auto;color:var(--mut)}
+
+/* reveal */
+[data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+[data-reveal].in{opacity:1;transform:none}
+
+/* ============ Proyectos ============ */
+.grid-proy{display:grid;gap:1.1rem;grid-template-columns:1fr}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:transform .45s var(--ease),border-color .35s}
+.card:hover{transform:translateY(-5px);border-color:var(--lime)}
+.card-btn{width:100%;display:block;text-align:left}
+.portada{position:relative;overflow:hidden;background:var(--lime);aspect-ratio:4/3}
+.card-ancha .portada{aspect-ratio:21/10}
+.portada img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.12) brightness(.96);transition:transform 1s var(--ease),filter .5s}
+.portada .tinte{position:absolute;inset:0;background:var(--lime);mix-blend-mode:multiply;transition:opacity .5s}
+.card:hover .portada img{transform:scale(1.05);filter:none}
+.card:hover .portada .tinte{opacity:0}
+.portada-chip{
+  position:absolute;top:.9rem;left:.9rem;z-index:2;
+  background:rgba(13,13,17,.75);backdrop-filter:blur(6px);border:1px solid var(--line);
+  border-radius:999px;padding:.35rem .8rem;color:var(--ink);
+}
+.card-info{display:flex;align-items:flex-end;gap:1rem;padding:1.15rem 1.2rem 1.3rem}
+.card-info .col{display:flex;flex-direction:column;gap:.35rem;min-width:0}
+.card-info .fila-sup{display:flex;gap:.9rem;color:var(--mut)}
+.card-info h3{font-family:var(--fd);font-weight:700;font-size:1.3rem;letter-spacing:-.01em;line-height:1.1}
+.card-ancha .card-info h3{font-size:clamp(1.5rem,2.6vw,2rem)}
+.card-info .tags{color:var(--mut);text-transform:none;letter-spacing:.04em}
+.card-info .flecha{
+  margin-left:auto;width:42px;height:42px;border:1px solid var(--line);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex:none;
+  transition:background .3s,color .3s,transform .4s var(--ease);
+}
+.card:hover .flecha{background:var(--lime);color:var(--lime-ink);border-color:var(--lime);transform:translate(3px,-3px)}
+
+/* ============ Sobre mí — bento ============ */
+.bento{display:grid;gap:1.1rem;grid-template-columns:1fr}
+.tile{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:1.5rem;transition:border-color .35s}
+.tile:hover{border-color:rgba(217,244,84,.45)}
+.tile h3{font-family:var(--fm);font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);font-weight:500;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.tile h3 .lucide{color:var(--lime)}
+.tile-retrato{padding:0;overflow:hidden;position:relative;min-height:340px}
+.tile-retrato img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.08);transition:filter .5s}
+.tile-retrato:hover img{filter:none}
+.tile-retrato figcaption{
+  position:absolute;left:.9rem;bottom:.9rem;z-index:2;
+  background:rgba(13,13,17,.75);backdrop-filter:blur(6px);border-radius:999px;padding:.35rem .8rem;
+}
+.tile-bio p.destacada{font-family:var(--fd);font-weight:700;font-size:clamp(1.25rem,2vw,1.6rem);line-height:1.25;letter-spacing:-.01em;margin-bottom:.9rem}
+.tile-bio p.destacada em{color:var(--lime);font-style:normal}
+.tile-bio p+p{margin-top:.7rem;color:var(--mut);font-size:.95rem}
+.pills{display:flex;flex-wrap:wrap;gap:.5rem}
+.pills span{border:1px solid var(--line);border-radius:999px;padding:.42rem .9rem;font-size:.82rem;font-weight:500;transition:background .3s,color .3s,border-color .3s}
+.pills span:hover{background:var(--lime);color:var(--lime-ink);border-color:var(--lime)}
+.ahora li{display:flex;gap:.9rem;padding:.55rem 0;border-bottom:1px dashed var(--line);font-size:.92rem}
+.ahora li:last-child{border:0}
+.ahora li b{font-family:var(--fm);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);font-weight:500;min-width:6.4rem;padding-top:.2rem}
+.mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.mini-stats div{border:1px dashed var(--line);border-radius:14px;padding:.9rem}
+.mini-stats strong{font-family:var(--fd);font-weight:800;font-size:1.7rem;display:block;line-height:1.1}
+.mini-stats strong i{color:var(--lime);font-style:normal}
+.mini-stats span{color:var(--mut);font-size:.78rem}
+.servicios-mini{display:flex;flex-direction:column;gap:.4rem}
+.servicios-mini div{display:flex;align-items:center;gap:.7rem;padding:.55rem 0;border-bottom:1px dashed var(--line);font-weight:500;font-size:.95rem}
+.servicios-mini div:last-child{border:0}
+.servicios-mini .lucide{color:var(--lime)}
+
+/* ============ Trayectoria ============ */
+.tray li{
+  display:grid;grid-template-columns:1fr;gap:.35rem;
+  padding:1.5rem .2rem;border-top:1px solid var(--line);transition:background .3s;
+}
+.tray li:last-child{border-bottom:1px solid var(--line)}
+.tray li:hover{background:var(--bg2)}
+.t-anio{color:var(--lime)}
+.tray h3{font-family:var(--fd);font-weight:700;font-size:1.2rem;letter-spacing:-.01em}
+.tray .lugar{color:var(--mut);font-size:.9rem}
+.tray .desc{color:var(--mut);font-size:.92rem;max-width:64ch;margin-top:.3rem}
+
+/* ============ Contacto ============ */
+.contacto{background:#08080B;border-top:1px solid var(--line);padding:clamp(4.5rem,9vw,8rem) 0 calc(2rem + env(safe-area-inset-bottom))}
+.contacto-inner{max-width:1400px;margin:0 auto;padding:0 var(--pad)}
+.contacto h2{
+  font-family:var(--fd);font-weight:800;text-transform:uppercase;letter-spacing:-.025em;
+  font-size:clamp(2.2rem,8vw,5.6rem);line-height:1;margin-bottom:2.2rem;
+}
+.contacto h2 em{font-style:normal;color:var(--lime)}
+.email-fila{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;margin-bottom:3rem}
+.email-pill{
+  display:inline-flex;align-items:center;gap:.7rem;border:1px solid var(--line);
+  border-radius:999px;padding:.9rem 1.5rem;font-family:var(--fm);font-size:clamp(.85rem,2.4vw,1.15rem);
+  transition:border-color .3s,color .3s;word-break:break-all;
+}
+.email-pill:hover{border-color:var(--lime);color:var(--lime)}
+.email-pill .lucide{color:var(--lime)}
+.sociales{display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:3.5rem}
+.sociales a{
+  display:inline-flex;align-items:center;gap:.55rem;border:1px solid var(--line);
+  border-radius:999px;padding:.7rem 1.2rem;font-size:.85rem;font-weight:500;
+  transition:background .3s,color .3s,border-color .3s;
+}
+.sociales a:hover{background:var(--lime);color:var(--lime-ink);border-color:var(--lime)}
+.pie{
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;
+  border-top:1px solid var(--line);padding-top:1.4rem;color:var(--mut);
+}
+.pie .izq{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
+.flag{display:inline-flex;width:21px;height:14px;border-radius:3px;overflow:hidden;flex:none}
+.flag span:nth-child(1){flex:2;background:#FCD116}
+.flag span:nth-child(2){flex:1;background:#003893}
+.flag span:nth-child(3){flex:1;background:#CE1126}
+.volver{display:inline-flex;align-items:center;gap:.4rem;color:var(--ink);transition:color .3s}
+.volver:hover{color:var(--lime)}
+
+/* ============ Nav inferior (móvil) ============ */
+.bottomo{
+  position:fixed;left:50%;transform:translateX(-50%);
+  bottom:calc(.9rem + env(safe-area-inset-bottom));z-index:110;
+  display:none;gap:.2rem;padding:.35rem;
+  background:rgba(20,20,27,.88);backdrop-filter:blur(14px);
+  border:1px solid var(--line);border-radius:999px;
+  box-shadow:0 12px 34px rgba(0,0,0,.45);
+}
+.bottomo a{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:.55rem 1rem;border-radius:999px;color:var(--mut);
+  font-family:var(--fm);font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;
+  transition:background .3s,color .3s;min-width:64px;
+}
+.bottomo a .lucide{width:1.25rem;height:1.25rem}
+.bottomo a.activo{background:var(--lime);color:var(--lime-ink)}
+
+/* ============ Bottom sheet (caso de estudio) ============ */
+.sheet-wrap{position:fixed;inset:0;z-index:150;display:flex;align-items:center;justify-content:center;visibility:hidden;transition:visibility 0s .5s}
+.sheet-wrap.abierto{visibility:visible;transition:none}
+.sheet-back{position:absolute;inset:0;background:rgba(5,5,8,.7);backdrop-filter:blur(6px);opacity:0;transition:opacity .45s}
+.sheet-wrap.abierto .sheet-back{opacity:1}
+.sheet{
+  position:relative;width:min(980px,100%);max-height:90dvh;overflow:auto;
+  background:var(--bg2);border:1px solid var(--line);border-radius:22px;
+  display:grid;grid-template-columns:minmax(0,44fr) minmax(0,56fr);
+  transform:translateY(36px) scale(.98);opacity:0;
+  transition:transform .55s var(--ease),opacity .4s;
+}
+.sheet-wrap.abierto .sheet{transform:none;opacity:1}
+.sheet-close{
+  position:absolute;top:.9rem;right:.9rem;z-index:3;width:44px;height:44px;border-radius:50%;
+  background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+  transition:transform .4s var(--ease),background .3s,color .3s;
+}
+.sheet-close:hover{background:var(--lime);color:var(--lime-ink);transform:rotate(90deg)}
+.sheet-media{position:relative;background:var(--lime);min-height:380px}
+.sheet-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.1)}
+.sheet-body{padding:clamp(1.5rem,3vw,2.6rem)}
+.sheet-cab{display:flex;gap:1rem;color:var(--lime);margin-bottom:1rem}
+.sheet-body h3{font-family:var(--fd);font-weight:800;font-size:clamp(1.6rem,3vw,2.3rem);letter-spacing:-.02em;line-height:1.05;margin-bottom:1.3rem}
+.sheet-meta{display:flex;flex-wrap:wrap;gap:1.4rem;border-block:1px solid var(--line);padding:1rem 0;margin-bottom:1.3rem}
+.sheet-meta div{display:flex;flex-direction:column;gap:.2rem}
+.sheet-meta b{font-family:var(--fm);font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);font-weight:500}
+.sheet-body p+p{margin-top:.9rem;color:var(--mut)}
+.sheet-nav{display:flex;gap:.7rem;margin-top:1.8rem}
+.sheet-nav button{
+  display:inline-flex;align-items:center;gap:.5rem;border:1px solid var(--line);
+  border-radius:999px;padding:.7rem 1.2rem;font-size:.8rem;font-weight:600;
+  transition:background .3s,color .3s,border-color .3s;
+}
+.sheet-nav button:hover{background:var(--lime);color:var(--lime-ink);border-color:var(--lime)}
+
+/* ============ Toast ============ */
+.toast{
+  position:fixed;left:50%;bottom:calc(5.6rem + env(safe-area-inset-bottom));z-index:180;
+  transform:translate(-50%,180%);background:var(--bg3);border:1px solid var(--lime);
+  color:var(--ink);border-radius:999px;padding:.85rem 1.4rem;
+  display:flex;align-items:center;gap:.6rem;font-size:.85rem;font-weight:500;
+  transition:transform .5s var(--ease);box-shadow:0 12px 30px rgba(0,0,0,.4);
+}
+.toast .lucide{color:var(--lime)}
+.toast.visible{transform:translate(-50%,0)}
+
+/* ============ Responsive ============ */
+@media (min-width:640px){
+  .bento{grid-template-columns:1fr 1fr}
+  .tile-bio{grid-column:1/-1}
+}
+@media (min-width:720px){
+  .grid-proy{grid-template-columns:1fr 1fr}
+  .card-ancha{grid-column:1/-1}
+}
+@media (min-width:900px){
+  .bento{grid-template-columns:repeat(3,1fr);grid-template-areas:"retrato bio bio" "retrato stack ahora" "stats stack ahora"}
+  .tile-retrato{grid-area:retrato;min-height:0}
+  .tile-bio{grid-area:bio}
+  .tile-stack{grid-area:stack}
+  .tile-ahora{grid-area:ahora}
+  .tile-stats{grid-area:stats;display:flex;flex-direction:column;justify-content:center}
+  .tile-serv{grid-area:serv}
+  .bento{grid-template-areas:"retrato bio bio" "retrato stack ahora" "serv stack ahora" "serv stats stats"}
+  .tray li{grid-template-columns:180px 1fr;gap:1.5rem;align-items:baseline}
+  .tray .der{display:flex;flex-direction:column}
+  .tray .desc{margin-top:.2rem}
+}
+@media (min-width:980px){
+  .sello{display:flex}
+}
+@media (max-width:979px){
+  .nav-topo{display:none}
+  .reloj{display:none}
+  .bottomo{display:flex}
+  body{padding-bottom:5.4rem}
+  .toast{bottom:calc(6.4rem + env(safe-area-inset-bottom))}
+}
+@media (max-width:640px){
+  .sheet-wrap{align-items:flex-end}
+  .sheet{grid-template-columns:1fr;border-radius:20px 20px 0 0;max-height:92dvh;transform:translateY(105%)}
+  .sheet-media{min-height:0;aspect-ratio:16/10}
+  .card-ancha .portada{aspect-ratio:4/3}
+  .btn-icono{width:48px;height:48px}
+}
+
+/* ============ Movimiento reducido ============ */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  html{scroll-behavior:auto}
+  [data-reveal]{opacity:1 !important;transform:none !important}
+  .cursor{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="progreso" aria-hidden="true"><span id="barra"></span></div>
+<div class="cursor" id="cursor" aria-hidden="true"></div>
+<a class="saltar" href="#inicio">Saltar al contenido</a>
+
+<!-- ============ Header ============ -->
+<header class="topo" id="topo">
+  <div class="topo-inner">
+    <a class="logo" href="#inicio">Mateo<b>*</b>Rincón</a>
+    <nav class="nav-topo" aria-label="Navegación principal">
+      <a href="#inicio" data-top="inicio">Inicio</a>
+      <a href="#proyectos" data-top="proyectos">Proyectos</a>
+      <a href="#sobre-mi" data-top="sobre-mi">Sobre mí</a>
+      <a href="#experiencia" data-top="experiencia">Experiencia</a>
+      <a href="#contacto" data-top="contacto">Contacto</a>
+    </nav>
+    <div class="topo-der">
+      <span class="reloj mono" id="relojTopo">Medellín · --:--</span>
+      <a class="btn" href="#contacto" style="padding:.65rem 1.2rem">Hablemos</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ============ Hero ============ -->
+  <section class="hero" id="inicio">
+    <div class="estado mono" data-reveal>
+      <img src="https://picsum.photos/seed/mateo-avatar/120/120.jpg" alt="">
+      <span class="punto" aria-hidden="true"></span>
+      Disponible para proyectos
+    </div>
+
+    <h1 data-reveal style="transition-delay:.08s">
+      Mateo<br><span class="out">Rincón</span><span class="estrella" aria-hidden="true">✳</span>
+    </h1>
+
+    <!-- Sello giratorio (solo escritorio) -->
+    <a class="sello" href="#proyectos" aria-label="Bajar a proyectos">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <defs><path id="circulo" d="M60,60 m-47,0 a47,47 0 1,1 94,0 a47,47 0 1,1 -94,0"/></defs>
+        <text><textPath href="#circulo" textLength="294">Ver proyectos · Medellín CO · Desliza ·</textPath></text>
+      </svg>
+      <i data-lucide="arrow-down"></i>
+    </a>
+
+    <div class="hero-lado" data-reveal style="transition-delay:.16s">
+      <p class="intro">Soy <strong>desarrollador creativo</strong> en Medellín, Colombia. Construyo sitios y productos web donde el código y el diseño se tienen el mismo respeto: rápidos, accesibles y con carácter propio.</p>
+      <div class="hero-ctas">
+        <a class="btn" href="#proyectos">Ver proyectos <i data-lucide="arrow-down"></i></a>
+        <a class="btn btn-fantasma" href="#sobre-mi">Sobre mí</a>
+      </div>
+    </div>
+
+    <ul class="hero-datos" data-reveal style="transition-delay:.24s">
+      <li><strong>06+</strong><span class="mono">años de oficio</span></li>
+      <li><strong>32</strong><span class="mono">proyectos lanzados</span></li>
+      <li><strong>LATAM</strong><span class="mono">clientes en 5 países</span></li>
+      <li><strong>GMT−5</strong><span class="mono">hora de Medellín</span></li>
+    </ul>
+  </section>
+
+  <!-- ============ Ticker ============ -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-pista">
+      <div class="ticker-bloque">
+        <span>React</span><span class="est">✦</span><span>TypeScript</span><span class="est">✦</span>
+        <span>Three.js</span><span class="est">✦</span><span>Next.js</span><span class="est">✦</span>
+        <span>GSAP</span><span class="est">✦</span><span>Node</span><span class="est">✦</span>
+        <span>Figma</span><span class="est">✦</span><span>Creative coding</span><span class="est">✦</span>
+      </div>
+      <div class="ticker-bloque">
+        <span>React</span><span class="est">✦</span><span>TypeScript</span><span class="est">✦</span>
+        <span>Three.js</span><span class="est">✦</span><span>Next.js</span><span class="est">✦</span>
+        <span>GSAP</span><span class="est">✦</span><span>Node</span><span class="est">✦</span>
+        <span>Figma</span><span class="est">✦</span><span>Creative coding</span><span class="est">✦</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Proyectos ============ -->
+  <section class="seccion" id="proyectos">
+    <div class="sec-cab" data-reveal>
+      <span class="mono num">(01)</span>
+      <h2>Proyectos</h2>
+      <span class="mono nota">Seleccionados · 2023 — 2025</span>
+    </div>
+    <div class="grid-proy" data-reveal>
+      <article class="card card-ancha">
+        <button class="card-btn" data-index="0">
+          <div class="portada">
+            <span class="portada-chip mono">WebGL · 2025</span>
+            <img src="https://picsum.photos/seed/rio-electronic/1400/700.jpg" alt="Portada del proyecto Río Electronic" loading="lazy">
+            <span class="tinte" aria-hidden="true"></span>
+          </div>
+          <div class="card-info">
+            <div class="col">
+              <span class="fila-sup mono"><span>01</span><span>Sitio inmersivo</span></span>
+              <h3>Río Electronic</h3>
+              <span class="mono tags">Festival de música · Next.js · Three.js</span>
+            </div>
+            <span class="flecha"><i data-lucide="arrow-up-right"></i></span>
+          </div>
+        </button>
+      </article>
+      <article class="card">
+        <button class="card-btn" data-index="1">
+          <div class="portada">
+            <span class="portada-chip mono">E-commerce · 2024</span>
+            <img src="https://picsum.photos/seed/la-vecina-tienda/900/680.jpg" alt="Portada del proyecto La Vecina Tienda" loading="lazy">
+            <span class="tinte" aria-hidden="true"></span>
+          </div>
+          <div class="card-info">
+            <div class="col">
+              <span class="fila-sup mono"><span>02</span><span>Moda circular</span></span>
+              <h3>La Vecina Tienda</h3>
+              <span class="mono tags">Astro · Shopify</span>
+            </div>
+            <span class="flecha"><i data-lucide="arrow-up-right"></i></span>
+          </div>
+        </button>
+      </article>
+      <article class="card">
+        <button class="card-btn" data-index="2">
+          <div class="portada">
+            <span class="portada-chip mono">Datos · 2024</span>
+            <img src="https://picsum.photos/seed/teleferico-digital/900/680.jpg" alt="Portada del proyecto Teleférico Digital" loading="lazy">
+            <span class="tinte" aria-hidden="true"></span>
+          </div>
+          <div class="card-info">
+            <div class="col">
+              <span class="fila-sup mono"><span>03</span><span>Visualización</span></span>
+              <h3>Teleférico Digital</h3>
+              <span class="mono tags">SvelteKit · D3 · MapLibre</span>
+            </div>
+            <span class="flecha"><i data-lucide="arrow-up-right"></i></span>
+          </div>
+        </button>
+      </article>
+      <article class="card">
+        <button class="card-btn" data-index="3">
+          <div class="portada">
+            <span class="portada-chip mono">Animación · 2023</span>
+            <img src="https://picsum.photos/seed/estudio-rana/900/680.jpg" alt="Portada del proyecto Estudio Rana" loading="lazy">
+            <span class="tinte" aria-hidden="true"></span>
+          </div>
+          <div class="card-info">
+            <div class="col">
+              <span class="fila-sup mono"><span>04</span><span>Portafolio</span></span>
+              <h3>Estudio Rana</h3>
+              <span class="mono tags">Canvas · Barba.js</span>
+            </div>
+            <span class="flecha"><i data-lucide="arrow-up-right"></i></span>
+          </div>
+        </button>
+      </article>
+      <article class="card">
+        <button class="card-btn" data-index="4">
+          <div class="portada">
+            <span class="portada-chip mono">Fintech · 2023</span>
+            <img src="https://picsum.photos/seed/ahorra-app/900/680.jpg" alt="Portada del proyecto Ahorra+" loading="lazy">
+            <span class="tinte" aria-hidden="true"></span>
+          </div>
+          <div class="card-info">
+            <div class="col">
+              <span class="fila-sup mono"><span>05</span><span>Producto web</span></span>
+              <h3>Ahorra+</h3>
+              <span class="mono tags">React · TypeScript</span>
+            </div>
+            <span class="flecha"><i data-lucide="arrow-up-right"></i></span>
+          </div>
+        </button>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ Sobre mí ============ -->
+  <section class="seccion" id="sobre-mi">
+    <div class="sec-cab" data-reveal>
+      <span class="mono num">(02)</span>
+      <h2>Sobre mí</h2>
+      <span class="mono nota">Medellín, Colombia</span>
+    </div>
+    <div class="bento" data-reveal>
+      <figure class="tile tile-retrato">
+        <img src="https://picsum.photos/seed/mateo-medellin/800/1000.jpg" alt="Retrato de Mateo Rincón en Medellín">
+        <figcaption class="mono">El Poblado, Medellín — 2025</figcaption>
+      </figure>
+      <div class="tile tile-bio">
+        <h3><i data-lucide="user"></i>Quién soy</h3>
+        <p class="destacada">Vivo entre dos mundos: el <em>código</em> y el <em>diseño</em>. No me gustaría tener que elegir.</p>
+        <p>Llevo seis años construyendo interfaces para marcas, estudios y startups en Latinoamérica. Empecé maquetando a los 19 en un ciber de Laureles; hoy lidero el front-end de proyectos que llegan a cientos de miles de personas.</p>
+        <p>Me obsesionan el rendimiento, la tipografía y esa sensación de que un sitio "responde" antes de que termines el clic. Fuera del editor: bicicleta, salsa dura y demasiado café.</p>
+      </div>
+      <div class="tile tile-stack">
+        <h3><i data-lucide="braces"></i>Stack frecuente</h3>
+        <div class="pills">
+          <span>TypeScript</span><span>React</span><span>Next.js</span><span>Astro</span>
+          <span>Svelte</span><span>Three.js</span><span>GSAP</span><span>Node</span>
+          <span>Tailwind</span><span>Figma</span><span>Sanity</span><span>Vercel</span>
+        </div>
+      </div>
+      <div class="tile tile-ahora">
+        <h3><i data-lucide="zap"></i>Ahora mismo</h3>
+        <ul class="ahora">
+          <li><b>Leyendo</b><span>Refactoring UI, por tercera vez</span></li>
+          <li><b>Construyendo</b><span>Generador de patrones con Canvas</span></li>
+          <li><b>Aprendiendo</b><span>Shaders GLSL desde cero</span></li>
+          <li><b>Escuchando</b><span>Salsa dura y synthwave, sin orden</span></li>
+        </ul>
+      </div>
+      <div class="tile tile-serv">
+        <h3><i data-lucide="orbit"></i>Qué hago</h3>
+        <div class="servicios-mini">
+          <div><i data-lucide="pen-tool"></i>Diseño de interfaz y prototipos</div>
+          <div><i data-lucide="code"></i>Desarrollo front-end a medida</div>
+          <div><i data-lucide="orbit"></i>Motion, WebGL y 3D ligero</div>
+        </div>
+      </div>
+      <div class="tile tile-stats">
+        <h3><i data-lucide="activity"></i>En números</h3>
+        <div class="mini-stats">
+          <div><strong>06<i>+</i></strong><span>años de experiencia</span></div>
+          <div><strong>32</strong><span>proyectos lanzados</span></div>
+          <div><strong>05</strong><span>países con clientes</span></div>
+          <div><strong>98<i>/100</i></strong><span>Lighthouse promedio</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Experiencia ============ -->
+  <section class="seccion" id="experiencia">
+    <div class="sec-cab" data-reveal>
+      <span class="mono num">(03)</span>
+      <h2>Trayectoria</h2>
+      <span class="mono nota">2016 — Hoy</span>
+    </div>
+    <ol class="tray" data-reveal>
+      <li>
+        <span class="mono t-anio">2022 — Hoy</span>
+        <div class="der">
+          <h3>Desarrollador creativo senior</h3>
+          <span class="lugar">Gráfica Sur — estudio digital, Medellín</span>
+          <p class="desc">Sitios premiados y productos digitales para marcas de Latinoamérica. Lidero el frente técnico: arquitectura front-end, motion y todo lo que brilla en pantalla.</p>
+        </div>
+      </li>
+      <li>
+        <span class="mono t-anio">2020 — 2022</span>
+        <div class="der">
+          <h3>Desarrollador front-end</h3>
+          <span class="lugar">Vasta Studio — remoto, clientes de Norteamérica</span>
+          <p class="desc">Trabajo asíncrono con equipos distribuidos. Aprendí a documentar decisiones, no solo a escribir código.</p>
+        </div>
+      </li>
+      <li>
+        <span class="mono t-anio">2018 — 2020</span>
+        <div class="der">
+          <h3>Front-end</h3>
+          <span class="lugar">Plaza App — startup, Bogotá</span>
+          <p class="desc">Primer design system, primera app web en producción y primera vez que un cliente dijo "esto se siente rápido".</p>
+        </div>
+      </li>
+      <li>
+        <span class="mono t-anio">2016 — 2018</span>
+        <div class="der">
+          <h3>Freelance</h3>
+          <span class="lugar">Medellín</span>
+          <p class="desc">Primeros clientes, presupuestos mal calculados y las mejores lecciones. Todo lo demás nació aquí.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+</main>
+
+<!-- ============ Contacto ============ -->
+<footer class="contacto" id="contacto">
+  <div class="contacto-inner">
+    <div class="sec-cab" data-reveal>
+      <span class="mono num">(04)</span>
+      <h2>Hablemos</h2>
+      <span class="mono nota">Respuesta en menos de 24 h</span>
+    </div>
+    <h2 data-reveal>¿Tienes una idea<br>entre manos? <em>Escríbeme.</em></h2>
+    <div class="email-fila" data-reveal>
+      <a class="email-pill" href="mailto:hola@mateorincon.dev"><i data-lucide="mail"></i>hola@mateorincon.dev</a>
+      <button class="btn-icono" id="btnCopiar" aria-label="Copiar correo electrónico"><i data-lucide="copy"></i></button>
+    </div>
+    <div class="sociales" data-reveal>
+      <a href="https://github.com/mateo-rincon" target="_blank" rel="noopener"><i data-lucide="github"></i>GitHub</a>
+      <a href="https://www.linkedin.com/in/mateo-rincon" target="_blank" rel="noopener"><i data-lucide="linkedin"></i>LinkedIn</a>
+      <a href="https://dribbble.com/mateorincon" target="_blank" rel="noopener"><i data-lucide="dribbble"></i>Dribbble</a>
+      <a href="https://www.instagram.com/mateo.codes" target="_blank" rel="noopener"><i data-lucide="instagram"></i>Instagram</a>
+    </div>
+    <div class="pie mono">
+      <div class="izq">
+        <span class="flag" role="img" aria-label="Bandera de Colombia"><span></span><span></span><span></span></span>
+        <span>Hecho con café en Medellín, Colombia</span>
+        <span id="relojPie">· --:--</span>
+      </div>
+      <span>© <span id="anio">2025</span> Mateo Rincón</span>
+      <a class="volver" href="#inicio">Volver arriba <i data-lucide="arrow-up"></i></a>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ Nav inferior móvil ============ -->
+<nav class="bottomo" aria-label="Navegación móvil">
+  <a href="#inicio" data-bottom="inicio"><i data-lucide="house"></i>Inicio</a>
+  <a href="#proyectos" data-bottom="proyectos"><i data-lucide="briefcase"></i>Proyectos</a>
+  <a href="#sobre-mi" data-bottom="sobre"><i data-lucide="user"></i>Sobre mí</a>
+  <a href="#contacto" data-bottom="contacto"><i data-lucide="mail"></i>Contacto</a>
+</nav>
+
+<!-- ============ Bottom sheet: caso de estudio ============ -->
+<div class="sheet-wrap" id="sheet" aria-hidden="true">
+  <div class="sheet-back" data-cerrar></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitulo">
+    <button class="sheet-close" data-cerrar aria-label="Cerrar caso de estudio"><i data-lucide="x"></i></button>
+    <div class="sheet-media"><img id="shImg" src="" alt=""></div>
+    <div class="sheet-body">
+      <div class="sheet-cab mono"><span id="shNum">01 / 05</span><span id="shCat">—</span><span id="shAnio">—</span></div>
+      <h3 id="shTitulo">—</h3>
+      <div class="sheet-meta">
+        <div><b>Rol</b><span id="shRol">—</span></div>
+        <div><b>Stack</b><span id="shStack">—</span></div>
+        <div><b>Año</b><span id="shAnio2">—</span></div>
+      </div>
+      <p id="shP1"></p>
+      <p id="shP2"></p>
+      <div class="sheet-nav">
+        <button id="shPrev"><i data-lucide="arrow-left"></i>Anterior</button>
+        <button id="shNext">Siguiente<i data-lucide="arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="status"><i data-lucide="check"></i><span id="toastTexto"></span></div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const EMAIL = 'hola@mateorincon.dev';
+  const fino = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  const sinMov = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Datos de proyectos ---------- */
+  const PROYECTOS = [
+    { titulo:'Río Electronic', anio:'2025', cat:'Sitio inmersivo', rol:'Dirección técnica y desarrollo', stack:'Next.js · Three.js · GSAP', seed:'rio-electronic',
+      p1:'Sitio oficial de un festival de música electrónica a orillas del río Medellín. Una escena 3D reacciona al lineup: cada artista desbloquea su propio mundo, con paleta y terreno generados proceduralmente a partir de su sonido.',
+      p2:'El sitio soportó 180 mil visitas en la semana del evento sin despeinarse, y la escena inicial fue destacada en galerías internacionales de WebGL.' },
+    { titulo:'La Vecina Tienda', anio:'2024', cat:'E-commerce headless', rol:'Lead front-end', stack:'Astro · Shopify · Tailwind', seed:'la-vecina-tienda',
+      p1:'Tienda en línea para una marca de moda circular de Medellín. Cada prenda cuenta su historia: origen, reparaciones y anteriores dueños, todo dentro de la ficha de producto.',
+      p2:'Checkout en un paso, imágenes con carga progresiva y un puntaje Lighthouse de 98 en móvil. Las ventas online crecieron 60 % en seis meses.' },
+    { titulo:'Teleférico Digital', anio:'2024', cat:'Visualización de datos', rol:'Diseño y desarrollo', stack:'SvelteKit · D3 · MapLibre', seed:'teleferico-digital',
+      p1:'Plataforma de datos abiertos sobre el Metrocable de Medellín: afluencia por estación, tiempos de trayecto y mapas interactivos construidos con datos públicos.',
+      p2:'Hoy lo usan periodistas de datos y estudiantes para entender cómo la ciudad se mueve en el aire. El proyecto es open source.' },
+    { titulo:'Estudio Rana', anio:'2023', cat:'Portafolio animado', rol:'Dirección de arte y código', stack:'HTML · Canvas · Barba.js', seed:'estudio-rana',
+      p1:'Portafolio para un estudio de animación colombiano. Los reels se reproducen en canvas con scrubbing manual y las transiciones entre proyectos se sienten como pasar páginas de un cuaderno de bocetos.',
+      p2:'Recibió mención honorífica en una galería internacional de diseño web y duplicó el tiempo promedio de visita del sitio anterior.' },
+    { titulo:'Ahorra+', anio:'2023', cat:'Producto fintech', rol:'Desarrollo front-end', stack:'React · TypeScript · Chart.js', seed:'ahorra-app',
+      p1:'Aplicación web de finanzas personales pensada para jóvenes en su primer empleo: metas de ahorro gamificadas, retos semanales y gráficas que no dan miedo.',
+      p2:'Más de 120 mil descargas en su primer año y una retención de usuarios tres veces superior al promedio del sector.' }
+  ];
+
+  /* ---------- Reloj de Medellín ---------- */
+  const fmt = new Intl.DateTimeFormat('es-CO',{timeZone:'America/Bogota',hour:'2-digit',minute:'2-digit',hour12:true});
+  const rTopo=$('relojTopo'), rPie=$('relojPie');
+  function tic(){ const t='Medellín · '+fmt.format(new Date()); rTopo.textContent=t; rPie.textContent=t; }
+  tic(); setInterval(tic,30000);
+
+  /* ---------- Header + barra de progreso ---------- */
+  const topo=$('topo'), barra=$('barra');
+  function onScroll(){
+    topo.classList.toggle('scrolled', window.scrollY>20);
+    const max=document.documentElement.scrollHeight-window.innerHeight;
+    barra.style.transform='scaleX('+(max>0?window.scrollY/max:0)+')';
+  }
+  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+
+  /* ---------- Reveal ---------- */
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+  }),{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
+
+  /* ---------- Nav activa (top + inferior) ---------- */
+  const MAPA={inicio:'inicio',proyectos:'proyectos','sobre-mi':'sobre',experiencia:'sobre',contacto:'contacto'};
+  const linksTop=document.querySelectorAll('.nav-topo a[data-top]');
+  const linksBot=document.querySelectorAll('.bottomo a[data-bottom]');
+  const ioSec=new IntersectionObserver(es=>es.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const id=e.target.id;
+    linksTop.forEach(a=>a.classList.toggle('activo',a.dataset.top===id));
+    linksBot.forEach(a=>a.classList.toggle('activo',a.dataset.bottom===MAPA[id]));
+  }),{rootMargin:'-45% 0px -50% 0px'});
+  ['inicio','proyectos','sobre-mi','experiencia','contacto'].forEach(id=>{const s=$(id); if(s) ioSec.observe(s);});
+
+  /* ---------- Bottom sheet ---------- */
+  const sheet=$('sheet'), shImg=$('shImg');
+  let actual=0, focoPrevio=null;
+  function pintar(i){
+    actual=(i+PROYECTOS.length)%PROYECTOS.length;
+    const p=PROYECTOS[actual];
+    $('shNum').textContent=String(actual+1).padStart(2,'0')+' / '+String(PROYECTOS.length).padStart(2,'0');
+    $('shCat').textContent=p.cat; $('shAnio').textContent=p.anio; $('shAnio2').textContent=p.anio;
+    $('shTitulo').textContent=p.titulo; $('shRol').textContent=p.rol; $('shStack').textContent=p.stack;
+    $('shP1').textContent=p.p1; $('shP2').textContent=p.p2;
+    shImg.src='https://picsum.photos/seed/'+p.seed+'/1100/800.jpg';
+    shImg.alt='Imagen del proyecto '+p.titulo;
+  }
+  function abrirSheet(i){
+    pintar(i);
+    focoPrevio=document.activeElement;
+    sheet.classList.add('abierto'); sheet.setAttribute('aria-hidden','false');
+    document.body.classList.add('no-scroll');
+    sheet.querySelector('.sheet-close').focus();
+  }
+  function cerrarSheet(){
+    sheet.classList.remove('abierto'); sheet.setAttribute('aria-hidden','true');
+    document.body.classList.remove('no-scroll');
+    if(focoPrevio) focoPrevio.focus();
+  }
+  document.querySelectorAll('.card-btn').forEach(b=>b.addEventListener('click',()=>abrirSheet(Number(b.dataset.index))));
+  document.querySelectorAll('[data-cerrar]').forEach(el=>el.addEventListener('click',cerrarSheet));
+  $('shNext').addEventListener('click',()=>pintar(actual+1));
+  $('shPrev').addEventListener('click',()=>pintar(actual-1));
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&sheet.classList.contains('abierto')) cerrarSheet(); });
+
+  /* ---------- Copiar correo + toast ---------- */
+  const toast=$('toast'); let tTimer;
+  async function copiar(txt){
+    try{ await navigator.clipboard.writeText(txt); }
+    catch(err){
+      const ta=document.createElement('textarea');
+      ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+    }
+  }
+  $('btnCopiar').addEventListener('click',async()=>{
+    await copiar(EMAIL);
+    $('toastTexto').textContent='Correo copiado al portapapeles';
+    toast.classList.add('visible');
+    clearTimeout(tTimer); tTimer=setTimeout(()=>toast.classList.remove('visible'),2600);
+  });
+
+  /* ---------- Botones magnéticos + cursor (solo escritorio) ---------- */
+  if(fino && !sinMov){
+    document.querySelectorAll('.btn,.btn-icono').forEach(b=>{
+      b.addEventListener('mousemove',e=>{
+        const r=b.getBoundingClientRect();
+        const dx=(e.clientX-r.left-r.width/2)*.25, dy=(e.clientY-r.top-r.height/2)*.35;
+        b.style.transform='translate('+dx+'px,'+dy+'px)';
+      });
+      b.addEventListener('mouseleave',()=>{ b.style.transform=''; });
+    });
+    const cursor=$('cursor');
+    let mx=-100,my=-100,cx=-100,cy=-100;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+    document.addEventListener('mouseover',e=>{
+      cursor.classList.toggle('grande',!!e.target.closest('a,button'));
+    });
+    (function loop(){
+      cx+=(mx-cx)*.18; cy+=(my-cy)*.18;
+      cursor.style.transform='translate('+(cx-cursor.offsetWidth/2)+'px,'+(cy-cursor.offsetHeight/2)+'px)';
+      requestAnimationFrame(loop);
+    })();
+  } else {
+    const c=$('cursor'); if(c) c.remove();
+  }
+
+  /* ---------- Año + iconos ---------- */
+  $('anio').textContent=new Date().getFullYear();
+  if(window.lucide) lucide.createIcons();
+})();
+</script>
+</body>
+</html>
